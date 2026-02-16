@@ -1,0 +1,21 @@
+node_modules/
+dist/
+.env
+.turbo/
+*.tsbuildinfo
+
+# Expo
+.expo/
+ios/
+android/
+web-build/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
