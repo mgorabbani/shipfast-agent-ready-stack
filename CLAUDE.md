@@ -9,6 +9,7 @@ This is a **Turborepo monorepo** with:
 - `apps/mobile` — Expo SDK 52 mobile app (iOS/Android/Web)
 - `packages/db` — Drizzle ORM, PostgreSQL schema & migrations
 - `packages/shared` — Shared Zod schemas, types & constants
+- `.claude/skills/` — Claude Code skills (image generation, etc.)
 
 ## Architecture
 
