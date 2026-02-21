@@ -1,12 +1,14 @@
 # ShipFast Stack
 
-Production-grade, Claude Code-enabled fullstack monorepo starter.
+Production-grade, AI-native fullstack monorepo starter with CLI scaffolder.
 
 ## Project Overview
 
 This is a **Turborepo monorepo** with:
-- `apps/api` — Fastify v5 REST API (TypeScript)
+- `apps/api` — Fastify v5 REST API (TypeScript, Better Auth, RBAC)
 - `apps/mobile` — Expo SDK 52 mobile app (iOS/Android/Web)
+- `apps/web` — Vite + React + TailwindCSS web app (optional)
+- `packages/cli` — `shipstack-agent` CLI scaffolder
 - `packages/db` — Drizzle ORM, PostgreSQL schema & migrations
 - `packages/shared` — Shared Zod schemas, types & constants
 - `.claude/skills/` — Claude Code skills (image generation, etc.)
@@ -16,14 +18,54 @@ This is a **Turborepo monorepo** with:
 ```
 shipfast-stack/
 ├── apps/
-│   ├── api/          → Fastify v5, JWT auth, RBAC
-│   └── mobile/       → Expo Router v4, TanStack Query
+│   ├── api/          → Fastify v5, Better Auth, RBAC
+│   ├── mobile/       → Expo Router v4, TanStack Query
+│   └── web/          → Vite + React + TailwindCSS (optional)
 ├── packages/
+│   ├── cli/          → shipstack-agent CLI scaffolder
 │   ├── db/           → Drizzle ORM, PostgreSQL
 │   └── shared/       → Zod schemas, shared types
 ├── docker-compose.yml
 └── turbo.json
 ```
+
+## CLI Scaffolder (`packages/cli/`)
+
+The `shipstack-agent` CLI scaffolds new projects from this template:
+
+```bash
+npx shipstack-agent init       # Interactive project setup
+npx shipstack-agent docs       # Regenerate AI docs
+```
+
+### How the scaffold engine works:
+1. Clones this template via degit
+2. Prompts for frontend (Expo or Vite+React) and services
+3. Guides API key onboarding with browser integration
+4. Prunes unselected service files and patches imports
+5. Writes `.env` with collected keys
+6. Generates dynamic CLAUDE.md, PATTERNS.md, and downloads llms.txt
+
+### CLI structure:
+- `src/commands/` — init and docs commands
+- `src/prompts/` — interactive CLI prompts (project, frontend, services)
+- `src/onboarding/` — guided API key collection per service
+- `src/scaffold/` — clone, prune, patch engine
+- `src/docs/` — CLAUDE.md, PATTERNS.md, llms.txt generators
+
+## Available Services
+
+| Service | Plugin | Routes | DB Schema |
+|---------|--------|--------|-----------|
+| Auth (Better Auth) | `plugins/auth.ts` | `/api/auth/*` (auto) | users, sessions, accounts |
+| Payments (Stripe) | `plugins/stripe.ts` | `/api/payments/*` | subscriptions, payments |
+| Payments (RevenueCat) | `plugins/revenuecat.ts` | `/api/subscriptions/*` | subscriptions |
+| Email (Resend) | `plugins/email.ts` | — (service) | — |
+| Storage (S3/R2) | `plugins/storage.ts` | `/api/files/*` | files |
+| AI (OpenAI/Fal.ai) | `plugins/ai.ts` | `/api/ai/*` | — |
+| Cron Jobs | `plugins/cron.ts` | — | — |
+| Webhooks (outbound) | — | `/api/webhook-endpoints/*` | webhook_endpoints |
+| Rate Limiting | `plugins/rateLimit.ts` | — | — |
 
 ## Core Conventions
 
@@ -69,14 +111,16 @@ npm run db:seed          # Seed database with sample data
 # Build
 npm run build            # Build all packages
 npm run typecheck        # Type-check all packages
+
+# CLI
+cd packages/cli && npx tsx src/index.ts init   # Test CLI locally
 ```
 
 ## Environment Variables
 
 Copy `.env.example` to `.env` and fill in:
 - `DATABASE_URL` — PostgreSQL connection string
-- `JWT_SECRET` — Secret for access tokens
-- `JWT_REFRESH_SECRET` — Secret for refresh tokens
+- `BETTER_AUTH_SECRET` — Secret for Better Auth sessions
 
 ## Adding a New Feature
 
@@ -86,15 +130,14 @@ When adding a new feature (e.g., "posts"), follow this order:
 2. **Migration** — Run `npm run db:generate` then `npm run db:migrate`.
 3. **Shared types** — Add Zod schemas in `packages/shared/src/schemas/`.
 4. **API route** — Create route file in `apps/api/src/routes/`, register in `index.ts`.
-5. **Mobile screens** — Add screens in `apps/mobile/app/(tabs)/`.
+5. **Frontend** — Add screens in `apps/mobile/` or `apps/web/`.
 
 ## Auth System
 
-- JWT access tokens (15 min) + refresh tokens (7 days).
-- Refresh token rotation on each refresh.
-- RBAC with permission-based access control.
+- Better Auth with session-based authentication.
+- Social providers: Google, GitHub (configurable via env vars).
 - Protected routes use `fastify.authenticate` preHandler.
-- Permission checks use `fastify.requirePermission()`.
+- `request.user` contains `{ id, email, role }` after authentication.
 
 ## Testing
 

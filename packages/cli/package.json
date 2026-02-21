@@ -6,7 +6,7 @@
   "bin": {
     "shipstack-agent": "./dist/index.js"
   },
-  "files": ["dist", "templates"],
+  "files": ["dist"],
   "scripts": {
     "dev": "tsx src/index.ts",
     "build": "tsc",

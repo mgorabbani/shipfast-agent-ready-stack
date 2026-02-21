@@ -1,201 +1,131 @@
 <p align="center">
-  <h1 align="center">🚀 ShipFast Stack</h1>
+  <h1 align="center">ShipFast Stack</h1>
   <p align="center">
     <strong>The fullstack starter that actually ships.</strong><br/>
     Production-grade. AI-powered. Claude Code-ready. Fork it. Build it. Ship it.
   </p>
   <p align="center">
-    <a href="#quick-start">Quick Start</a> · <a href="#whats-inside">What's Inside</a> · <a href="#ai-superpowers">AI Superpowers</a> · <a href="docs/ARCHITECTURE.md">Architecture</a> · <a href="docs/CONTRIBUTING.md">Contributing</a>
+    <a href="#quick-start">Quick Start</a> · <a href="#cli-scaffolder">CLI Scaffolder</a> · <a href="#whats-inside">What's Inside</a> · <a href="#ai-superpowers">AI Superpowers</a>
   </p>
 </p>
 
 ---
 
-> **Stop scaffolding. Start building.** ShipFast Stack gives you a battle-tested monorepo with auth, database, API, mobile app, and AI dev tools — so you can focus on what makes your app unique.
+> **Stop scaffolding. Start building.** ShipFast Stack gives you a battle-tested monorepo with auth, payments, email, storage, AI, and more — so you can focus on what makes your app unique.
 
-## ✨ Why ShipFast Stack?
+## Quick Start
 
-Most starters give you a todo app and wish you luck. ShipFast Stack gives you **production infrastructure**:
+### Option A: Interactive CLI (Recommended)
 
-🔐 **Auth that actually works** — JWT + refresh token rotation + RBAC. Not a "TODO: add auth" comment.
+```bash
+npx shipstack-agent init my-app
+```
 
-🤖 **AI-First DX** — Every package has a `CLAUDE.md` file that teaches Claude Code your architecture. Ask it to "add a posts feature" and watch it follow your patterns perfectly.
+The CLI will guide you through:
+1. Choose frontend (Expo mobile or Vite+React web)
+2. Pick services (payments, email, storage, AI, etc.)
+3. Set up API keys with guided browser walkthroughs
+4. Scaffold a project with only what you selected
 
-📱 **Ship everywhere** — iOS, Android, and Web from one codebase. Expo SDK 52 + React Native.
+### Option B: Clone and Configure
 
-🔒 **Type-safe from DB to UI** — Drizzle ORM types flow through Zod schemas to your React components. One typo? TypeScript catches it everywhere.
+```bash
+git clone https://github.com/mgorabbani/shipfast-agent-ready-stack.git my-app
+cd my-app
+npm install
+cp .env.example .env
+docker compose up -d
+npm run db:push
+npm run db:seed
+npm run dev
+```
 
-🎨 **AI Image Generation** — Built-in Claude Code skill for generating images via OpenAI's GPT Image API. Just say `/generate-image a hero banner for my landing page`.
+## CLI Scaffolder
 
-## 🏗️ What's Inside
+The `shipstack-agent` CLI scaffolds projects from this template, removing services you don't need and wiring up everything automatically.
+
+```bash
+npx shipstack-agent init       # Interactive project setup
+npx shipstack-agent docs       # Regenerate CLAUDE.md, PATTERNS.md, llms.txt
+```
+
+### What it does:
+- Prompts for frontend choice (Expo or Vite+React)
+- Lets you pick services: payments, email, storage, AI, cron, webhooks, rate limiting
+- Opens each service's dashboard in your browser for API key setup
+- Removes unused service files and patches imports
+- Writes `.env` with your collected keys
+- Generates dynamic AI documentation (CLAUDE.md, PATTERNS.md)
+- Downloads provider llms.txt files for AI-assisted development
+
+## What's Inside
 
 ```
 shipfast-stack/
-├── 🤖 CLAUDE.md                  # AI knows your whole project
 ├── apps/
-│   ├── 🔥 api/                   # Fastify v5 REST API
-│   │   ├── CLAUDE.md             # AI knows your API patterns
-│   │   └── src/
-│   │       ├── plugins/          # auth, db, cors
-│   │       └── routes/           # auth, profile, items (CRUD example)
-│   └── 📱 mobile/                # Expo app (iOS/Android/Web)
-│       ├── CLAUDE.md             # AI knows your mobile patterns
-│       ├── app/                  # File-based routing
-│       ├── lib/                  # API client, auth, query client
-│       └── components/
+│   ├── api/          → Fastify v5, Better Auth, RBAC
+│   ├── mobile/       → Expo Router v4, TanStack Query
+│   └── web/          → Vite + React + TailwindCSS (optional)
 ├── packages/
-│   ├── 🗄️ db/                    # Drizzle ORM + PostgreSQL
-│   │   ├── CLAUDE.md             # AI knows your schema conventions
-│   │   └── src/schema/
-│   └── 📦 shared/                # Zod schemas + constants
-│       └── CLAUDE.md             # AI knows what goes where
-├── 🎨 .claude/skills/            # AI skills (image generation, etc.)
-├── docs/
-│   ├── ARCHITECTURE.md           # Full architecture deep-dive
-│   └── CONTRIBUTING.md
-├── scripts/seed.ts
+│   ├── cli/          → shipstack-agent CLI scaffolder
+│   ├── db/           → Drizzle ORM, PostgreSQL
+│   └── shared/       → Zod schemas, shared types
 ├── docker-compose.yml
 └── turbo.json
 ```
 
-## ⚡ Tech Stack
+## Available Services
+
+| Service | Description |
+|---------|-------------|
+| **Auth** (always on) | Better Auth with email/password, Google, GitHub, magic link, 2FA |
+| **Database** (always on) | Drizzle ORM + PostgreSQL (Neon, Railway, Docker, or custom) |
+| **Payments** | Stripe (web) or RevenueCat (mobile) — checkout, subscriptions, webhooks |
+| **Email** | Resend — transactional email with HTML templates |
+| **Storage** | S3 or Cloudflare R2 — presigned upload/download URLs |
+| **AI** | OpenAI or Fal.ai — text completion and image generation |
+| **Cron Jobs** | Scheduled tasks with node-cron |
+| **Webhooks** | Outbound webhook delivery with HMAC signatures |
+| **Rate Limiting** | @fastify/rate-limit — 100 req/min default |
+
+## Tech Stack
 
 | Layer | What You Get |
 |-------|-------------|
-| **API** | Fastify v5 · TypeScript · JWT + Refresh Tokens · RBAC |
-| **Mobile/Web** | Expo SDK 52 · React Native · Expo Router v4 |
+| **API** | Fastify v5 · Better Auth · RBAC · Zod validation |
+| **Mobile** | Expo SDK 52 · React Native · Expo Router v4 |
+| **Web** | Vite · React · TailwindCSS · React Router |
 | **Database** | PostgreSQL 16 · Drizzle ORM · Type-safe migrations |
-| **Data Fetching** | TanStack Query v5 · Auto token refresh on 401 |
+| **Data Fetching** | TanStack Query v5 · Session-based auth |
 | **Validation** | Zod schemas shared between client & server |
 | **Build** | Turborepo · npm workspaces · Parallel builds |
-| **AI Dev** | CLAUDE.md files · Image generation skill |
+| **AI Dev** | Dynamic CLAUDE.md · PATTERNS.md · llms.txt |
 
-## 🚀 Quick Start
+## AI Superpowers
 
-Get up and running in under 2 minutes:
+Every scaffolded project includes auto-generated AI documentation:
+
+- **CLAUDE.md** — Project structure, active services, conventions, do/don't rules
+- **docs/PATTERNS.md** — Step-by-step recipes for common tasks (tailored to your services)
+- **docs/llms/*.txt** — Provider documentation for AI assistants
+
+### Regenerate after changes
 
 ```bash
-# Clone it
-git clone https://github.com/YOUR_USERNAME/shipfast-stack.git
-cd shipfast-stack
-
-# Install everything
-npm install
-
-# Start PostgreSQL
-docker compose up -d
-
-# Configure
-cp .env.example .env
-
-# Create tables
-npm run db:push
-
-# Seed demo data
-npm run db:seed
-
-# Launch! 🎉
-npm run dev
+npx shipstack-agent docs
 ```
 
-**That's it.** API on `http://localhost:3000`. Expo on `http://localhost:8081`.
+## Commands
 
-Login with `demo@shipfast.dev` / `password123`
-
-## 🤖 AI Superpowers
-
-This isn't just a starter — it's an **AI-native development environment**. Every package includes a `CLAUDE.md` file that gives Claude Code deep understanding of your codebase.
-
-### CLAUDE.md Files
-
-| File | What It Teaches Claude |
-|------|----------------------|
-| `CLAUDE.md` | Project overview, conventions, commands, feature workflow |
-| `apps/api/CLAUDE.md` | Route patterns, plugin architecture, auth flow, validation |
-| `apps/mobile/CLAUDE.md` | Expo Router, TanStack Query, auth, component patterns |
-| `packages/db/CLAUDE.md` | Schema conventions, migrations, query patterns |
-| `packages/shared/CLAUDE.md` | What belongs here, schema patterns, constants |
-
-### Built-in Skills
-
-| Skill | What It Does |
-|-------|-------------|
-| `/generate-image` | Creates images via OpenAI GPT Image API with smart prompt engineering |
-
-### Try It
-
-Open the project in Claude Code and try these:
-
-```
-> Add a posts feature with title, content, and author
-> Generate an image for the app splash screen
-> Add a notifications system with push support
+```bash
+npm run dev              # Start all apps
+npm run db:push          # Push schema to DB
+npm run db:generate      # Generate migration
+npm run db:migrate       # Run migrations
+npm run db:seed          # Seed demo data
+npm run build            # Build all packages
 ```
 
-Claude will follow the established patterns in your CLAUDE.md files automatically.
+## License
 
-## 🛠️ Adding a New Feature
-
-ShipFast Stack has a clear feature development workflow. Follow this order:
-
-```
-1. Schema     → packages/db/src/schema/my-feature.ts
-2. Migration  → npm run db:generate && npm run db:migrate
-3. Validation → packages/shared/src/schemas/my-feature.ts
-4. API Route  → apps/api/src/routes/my-feature.ts → register in index.ts
-5. Screen     → apps/mobile/app/(tabs)/my-feature/index.tsx
-```
-
-Or just tell Claude Code what you want and let the CLAUDE.md files guide it.
-
-## ✅ What's Included
-
-**Authentication & Security**
-- [x] JWT access tokens (15 min expiry)
-- [x] Refresh token rotation (7 day expiry)
-- [x] Role-based access control (RBAC)
-- [x] Secure token storage (SecureStore native / localStorage web)
-
-**Data Layer**
-- [x] Type-safe database queries (Drizzle ORM)
-- [x] Zod validation shared between client & server
-- [x] PostgreSQL with Docker Compose
-- [x] Database seed script
-
-**Mobile & Web**
-- [x] Cross-platform (iOS / Android / Web)
-- [x] File-based routing (Expo Router v4)
-- [x] TanStack Query with auto cache invalidation
-- [x] Auto token refresh on 401 responses
-
-**Developer Experience**
-- [x] CLAUDE.md files for AI-assisted development
-- [x] Image generation skill
-- [x] Turborepo parallel builds
-- [x] Full CRUD example (Items)
-- [x] Architecture documentation
-
-## 🤝 Contributing
-
-We love contributions! Check out our [Contributing Guide](docs/CONTRIBUTING.md) to get started.
-
-1. Fork the repo
-2. Create your feature branch (`git checkout -b feat/amazing-feature`)
-3. Commit your changes (`git commit -m 'feat: add amazing feature'`)
-4. Push to the branch (`git push origin feat/amazing-feature`)
-5. Open a Pull Request
-
-## ⭐ Show Your Support
-
-If ShipFast Stack helped you ship faster, give it a star! It helps others find this project.
-
-## 📄 License
-
-MIT — do whatever you want with it. Build something great.
-
----
-
-<p align="center">
-  <strong>Built with ❤️ and Claude Code</strong><br/>
-  <sub>Stop configuring. Start shipping.</sub>
-</p>
+MIT
