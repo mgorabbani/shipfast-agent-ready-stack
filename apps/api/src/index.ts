@@ -5,6 +5,7 @@ import corsPlugin from "./plugins/cors"
 import authPlugin from "./plugins/auth"
 import stripePlugin from "./plugins/stripe"
 import revenuecatPlugin from "./plugins/revenuecat"
+import emailPlugin from "./plugins/email"
 import profileRoutes from "./routes/profile"
 import itemRoutes from "./routes/items"
 import paymentRoutes from "./routes/payments"
@@ -20,6 +21,7 @@ await fastify.register(dbPlugin)
 await fastify.register(authPlugin)
 await fastify.register(stripePlugin)
 await fastify.register(revenuecatPlugin)
+await fastify.register(emailPlugin)
 
 // Routes (Better Auth routes handled by auth plugin at /api/auth/*)
 await fastify.register(profileRoutes, { prefix: "/api/profile" })
