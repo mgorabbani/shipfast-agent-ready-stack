@@ -10,7 +10,15 @@ import {
   promptDatabaseProvider,
 } from "../prompts/services.js"
 import { runOnboarding } from "../onboarding/index.js"
+import { cloneTemplate } from "../scaffold/clone.js"
+import { pruneServices } from "../scaffold/prune.js"
+import { writeEnvFile } from "../scaffold/patchEnv.js"
+import { patchPackageJson } from "../scaffold/patchPackageJson.js"
+import { patchApiIndex, patchDbSchemaIndex, patchSharedIndex } from "../scaffold/patchImports.js"
+import { generateDocs } from "../docs/index.js"
 import type { ProjectConfig } from "../types.js"
+import fs from "fs"
+import path from "path"
 
 export async function initCommand(name?: string) {
   p.intro(pc.bgCyan(pc.black(" shipstack-agent init ")))
@@ -63,8 +71,42 @@ export async function initCommand(name?: string) {
 
   p.log.success(`Collected ${Object.keys(env).length} environment variables`)
 
-  // TODO: Scaffold (Task 12)
-  // TODO: Generate AI docs (Task 14)
+  // Scaffold
+  await cloneTemplate(project.dir)
+  pruneServices(project.dir, config)
+  patchApiIndex(project.dir, config)
+  patchDbSchemaIndex(project.dir, config)
+  patchSharedIndex(project.dir, config)
+  patchPackageJson(project.dir, config)
+  writeEnvFile(project.dir, env)
 
-  p.outro(`${pc.green("Config collected!")} Next: scaffold + docs`)
+  p.log.success("Project scaffolded!")
+
+  // Generate AI docs
+  await generateDocs(project.dir, config)
+
+  p.log.success("AI documentation generated!")
+
+  // Save config for docs regeneration
+  fs.writeFileSync(
+    path.join(project.dir, ".shipstack.json"),
+    JSON.stringify(config, null, 2) + "\n",
+  )
+
+  // Final output
+  p.note(
+    [
+      `cd ${config.name}`,
+      "npm install",
+      config.databaseProvider === "docker" ? "docker compose up -d" : "",
+      "npm run db:push",
+      "npm run db:seed",
+      "npm run dev",
+    ]
+      .filter(Boolean)
+      .join("\n"),
+    "Next steps",
+  )
+
+  p.outro("Your AI-native backend is ready!")
 }
