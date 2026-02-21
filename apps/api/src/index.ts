@@ -7,6 +7,7 @@ import stripePlugin from "./plugins/stripe"
 import revenuecatPlugin from "./plugins/revenuecat"
 import emailPlugin from "./plugins/email"
 import storagePlugin from "./plugins/storage"
+import aiPlugin from "./plugins/ai"
 import profileRoutes from "./routes/profile"
 import itemRoutes from "./routes/items"
 import paymentRoutes from "./routes/payments"
@@ -14,6 +15,7 @@ import subscriptionRoutes from "./routes/subscriptions"
 import stripeWebhookRoutes from "./routes/webhooks/stripe"
 import revenuecatWebhookRoutes from "./routes/webhooks/revenuecat"
 import uploadRoutes from "./routes/upload"
+import aiRoutes from "./routes/ai"
 
 const fastify = Fastify({ logger: true })
 
@@ -25,6 +27,7 @@ await fastify.register(stripePlugin)
 await fastify.register(revenuecatPlugin)
 await fastify.register(emailPlugin)
 await fastify.register(storagePlugin)
+await fastify.register(aiPlugin)
 
 // Routes (Better Auth routes handled by auth plugin at /api/auth/*)
 await fastify.register(profileRoutes, { prefix: "/api/profile" })
@@ -34,6 +37,7 @@ await fastify.register(subscriptionRoutes, { prefix: "/api/subscriptions" })
 await fastify.register(stripeWebhookRoutes, { prefix: "/api/webhooks" })
 await fastify.register(revenuecatWebhookRoutes, { prefix: "/api/webhooks" })
 await fastify.register(uploadRoutes, { prefix: "/api/files" })
+await fastify.register(aiRoutes, { prefix: "/api/ai" })
 
 // Health check
 fastify.get("/api/health", async () => ({ status: "ok" }))
