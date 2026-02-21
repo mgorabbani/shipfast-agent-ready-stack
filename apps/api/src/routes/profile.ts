@@ -19,7 +19,7 @@ export default async function profileRoutes(fastify: FastifyInstance) {
         createdAt: users.createdAt,
       })
       .from(users)
-      .where(eq(users.id, request.user.userId))
+      .where(eq(users.id, request.user!.id))
       .limit(1)
 
     return user
@@ -32,7 +32,7 @@ export default async function profileRoutes(fastify: FastifyInstance) {
     const [updated] = await fastify.db
       .update(users)
       .set({ ...body, updatedAt: new Date() })
-      .where(eq(users.id, request.user.userId))
+      .where(eq(users.id, request.user!.id))
       .returning()
 
     return { id: updated.id, email: updated.email, username: updated.username, firstName: updated.firstName, lastName: updated.lastName }

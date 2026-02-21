@@ -3,7 +3,6 @@ import Fastify from "fastify"
 import dbPlugin from "./plugins/db"
 import corsPlugin from "./plugins/cors"
 import authPlugin from "./plugins/auth"
-import authRoutes from "./routes/auth"
 import profileRoutes from "./routes/profile"
 import itemRoutes from "./routes/items"
 
@@ -14,8 +13,7 @@ await fastify.register(corsPlugin)
 await fastify.register(dbPlugin)
 await fastify.register(authPlugin)
 
-// Routes
-await fastify.register(authRoutes, { prefix: "/api/auth" })
+// Routes (Better Auth routes handled by auth plugin at /api/auth/*)
 await fastify.register(profileRoutes, { prefix: "/api/profile" })
 await fastify.register(itemRoutes, { prefix: "/api/items" })
 

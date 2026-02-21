@@ -11,7 +11,7 @@ export default async function itemRoutes(fastify: FastifyInstance) {
     return fastify.db
       .select()
       .from(items)
-      .where(eq(items.userId, request.user.userId))
+      .where(eq(items.userId, request.user!.id))
   })
 
   // Create item
@@ -20,7 +20,7 @@ export default async function itemRoutes(fastify: FastifyInstance) {
 
     const [item] = await fastify.db
       .insert(items)
-      .values({ ...body, userId: request.user.userId })
+      .values({ ...body, userId: request.user!.id })
       .returning()
 
     return item
@@ -34,7 +34,7 @@ export default async function itemRoutes(fastify: FastifyInstance) {
     const [item] = await fastify.db
       .update(items)
       .set({ ...body, updatedAt: new Date() })
-      .where(and(eq(items.id, id), eq(items.userId, request.user.userId)))
+      .where(and(eq(items.id, id), eq(items.userId, request.user!.id)))
       .returning()
 
     if (!item) {
@@ -50,7 +50,7 @@ export default async function itemRoutes(fastify: FastifyInstance) {
 
     const [item] = await fastify.db
       .delete(items)
-      .where(and(eq(items.id, id), eq(items.userId, request.user.userId)))
+      .where(and(eq(items.id, id), eq(items.userId, request.user!.id)))
       .returning()
 
     if (!item) {

@@ -4,6 +4,7 @@ import { api } from "./api"
 interface User {
   id: string
   email: string
+  name: string
   role: string
 }
 
@@ -11,7 +12,7 @@ interface AuthContextType {
   user: User | null
   isLoading: boolean
   login: (email: string, password: string) => Promise<void>
-  register: (data: { email: string; username: string; password: string; firstName: string; lastName: string }) => Promise<void>
+  register: (data: { email: string; name: string; password: string }) => Promise<void>
   logout: () => Promise<void>
 }
 
@@ -27,40 +28,43 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   async function restoreSession() {
     try {
-      const token = await api.storage.get("accessToken")
+      const token = await api.storage.get("sessionToken")
       if (token) {
-        const profile = await api.get("/api/profile")
-        setUser(profile)
+        const session = await api.get("/api/auth/get-session")
+        if (session?.user) {
+          setUser(session.user)
+        }
       }
     } catch {
-      await api.storage.delete("accessToken")
-      await api.storage.delete("refreshToken")
+      await api.storage.delete("sessionToken")
     } finally {
       setIsLoading(false)
     }
   }
 
   async function login(email: string, password: string) {
-    const res = await api.post("/api/auth/login", { email, password })
-    await api.storage.set("accessToken", res.accessToken)
-    await api.storage.set("refreshToken", res.refreshToken)
-    setUser(res.user)
+    const res = await api.post("/api/auth/sign-in/email", { email, password })
+    if (res.token) {
+      await api.storage.set("sessionToken", res.token)
+    }
+    if (res.user) {
+      setUser(res.user)
+    }
   }
 
-  async function register(data: { email: string; username: string; password: string; firstName: string; lastName: string }) {
-    const res = await api.post("/api/auth/register", data)
-    await api.storage.set("accessToken", res.accessToken)
-    await api.storage.set("refreshToken", res.refreshToken)
-    setUser(res.user)
+  async function register(data: { email: string; name: string; password: string }) {
+    const res = await api.post("/api/auth/sign-up/email", data)
+    if (res.token) {
+      await api.storage.set("sessionToken", res.token)
+    }
+    if (res.user) {
+      setUser(res.user)
+    }
   }
 
   async function logout() {
-    const refreshToken = await api.storage.get("refreshToken")
-    if (refreshToken) {
-      await api.post("/api/auth/logout", { refreshToken }).catch(() => {})
-    }
-    await api.storage.delete("accessToken")
-    await api.storage.delete("refreshToken")
+    await api.post("/api/auth/sign-out", {}).catch(() => {})
+    await api.storage.delete("sessionToken")
     setUser(null)
   }
 
