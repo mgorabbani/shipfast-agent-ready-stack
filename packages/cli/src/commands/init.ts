@@ -9,6 +9,7 @@ import {
   promptAiProvider,
   promptDatabaseProvider,
 } from "../prompts/services.js"
+import { runOnboarding } from "../onboarding/index.js"
 import type { ProjectConfig } from "../types.js"
 
 export async function initCommand(name?: string) {
@@ -56,9 +57,14 @@ export async function initCommand(name?: string) {
   p.log.info(`Frontend: ${pc.bold(config.frontend)}`)
   p.log.info(`Services: ${pc.bold(["auth", "database", ...config.services].join(", "))}`)
 
-  // TODO: Guided onboarding (Task 3)
+  // Guided onboarding
+  const env = await runOnboarding(config)
+  config.env = env
+
+  p.log.success(`Collected ${Object.keys(env).length} environment variables`)
+
   // TODO: Scaffold (Task 12)
   // TODO: Generate AI docs (Task 14)
 
-  p.outro(`${pc.green("Config collected!")} Next: onboarding + scaffold`)
+  p.outro(`${pc.green("Config collected!")} Next: scaffold + docs`)
 }
