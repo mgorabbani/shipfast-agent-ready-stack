@@ -1,100 +1,149 @@
-# ShipStack Agent
+<p align="center">
+  <img src="https://img.shields.io/npm/v/shipstack-agent?style=flat-square&color=blue" alt="npm version" />
+  <img src="https://img.shields.io/badge/node-%3E%3D20-brightgreen?style=flat-square" alt="node version" />
+  <img src="https://img.shields.io/badge/license-MIT-green?style=flat-square" alt="license" />
+  <img src="https://img.shields.io/badge/PRs-welcome-blue?style=flat-square" alt="PRs welcome" />
+</p>
 
-**Your fullstack app in 2 minutes.** A CLI scaffolder that creates production-grade fullstack projects from scratch — always using the latest package versions.
+<h1 align="center">ShipStack Agent</h1>
 
-No stale templates. No boilerplate to maintain. Just a CLI that asks what you need, walks you through service signups, and generates a project with only the services you chose.
+<p align="center">
+  <strong>Stop configuring. Start building.</strong><br/>
+  One command to scaffold a production-grade fullstack app — auth, payments, email, storage, AI — with zero stale dependencies.
+</p>
+
+<p align="center">
+  <code>npx shipstack-agent init</code>
+</p>
+
+---
+
+## The Problem
+
+Every fullstack project starts the same way: 2 days wiring up auth, payments, email, file uploads, database schemas, and project structure. Then another day fighting dependency mismatches because the template you cloned was last updated 6 months ago.
+
+You haven't written a single line of business logic yet.
+
+## The Fix
+
+ShipStack Agent is not a template. It's a CLI that **generates your project from scratch** in ~2 minutes:
+
+1. **Pick what you need** — frontend (Expo or Vite+React), services (payments, email, storage, AI, cron, webhooks)
+2. **Get walked through setup** — the CLI opens each service's dashboard in your browser and collects API keys
+3. **Get a production-ready codebase** — runs real scaffold commands, installs latest packages, writes typed code
+4. **Start building immediately** — auth, database, and your selected services are wired and ready
+
+Every `npm install` pulls the latest published versions. No template to go stale. No boilerplate repo to maintain.
 
 ## Quick Start
 
-### CLI Mode
+### Option A: CLI
 
 ```bash
 npx shipstack-agent init
 ```
 
-You'll be guided through:
-1. Project name and frontend choice (Expo mobile or Vite+React web)
-2. Service selection (payments, email, storage, AI, cron, webhooks, rate limiting)
-3. API key setup — the CLI opens each service's dashboard in your browser and collects keys
-4. Project generation — runs `npx create-expo-app@latest`, `npm create vite@latest`, etc.
-5. AI docs generation — creates CLAUDE.md and PATTERNS.md tailored to your project
+The CLI walks you through everything interactively — project name, frontend, services, API key collection, and generation.
 
-### Claude Code Mode
+### Option B: Claude Code
 
-Open this repo in Claude Code and say:
+Open this repo in [Claude Code](https://docs.anthropic.com/en/docs/claude-code) and say:
 
-> "Follow the GUIDE.md to set up a new project for me"
+> Follow the GUIDE.md to set up a new project for me
 
-Claude reads GUIDE.md and walks you through the same steps interactively — asking about your choices, guiding you through service signups, and building the project from scratch.
+Claude reads the guide and builds your project conversationally — same output, more interactive.
 
-## What Gets Generated
+## What You Get
 
-A **Turborepo monorepo** with only what you selected:
+A **Turborepo monorepo** with only what you selected — nothing more:
 
 ```
 my-app/
 ├── apps/
-│   ├── api/             → Fastify v5, Better Auth, Drizzle ORM
-│   └── mobile/ or web/  → Expo or Vite+React+TailwindCSS
+│   ├── api/              → Fastify v5 + Better Auth + Drizzle ORM
+│   └── mobile/ or web/   → Expo (React Native) or Vite + React + TailwindCSS
 ├── packages/
-│   ├── db/              → Drizzle schema + PostgreSQL migrations
-│   └── shared/          → Zod validation schemas + constants
-├── CLAUDE.md            → AI-ready project documentation
-├── docs/PATTERNS.md     → Step-by-step development recipes
-├── docs/llms/           → Provider docs (better-auth.txt, stripe.txt, etc.)
-├── .shipstack.json      → Your project config (for docs regeneration)
-└── .env                 → API keys (auto-collected during setup)
+│   ├── db/               → Drizzle schema + PostgreSQL config
+│   └── shared/           → Zod validation schemas + shared constants
+├── CLAUDE.md             → AI-ready docs (Claude Code understands your project)
+├── docs/PATTERNS.md      → Step-by-step recipes for common tasks
+├── docs/llms/            → Provider docs (better-auth.txt, stripe.txt, etc.)
+└── .env                  → API keys (collected during setup)
 ```
 
-## Available Services
+## Services
 
 Auth and database are always included. Everything else is opt-in:
 
-| Service | What Gets Generated |
-|---------|-------------------|
-| **Auth** | Better Auth plugin, session/account tables, Google/GitHub OAuth |
-| **Database** | Drizzle ORM, PostgreSQL (Neon, Railway, Docker, or custom URL) |
-| **Payments** | Stripe checkout + webhooks (web) or RevenueCat entitlements (mobile) |
-| **Email** | Resend plugin + email service helper |
-| **Storage** | S3/R2 plugin, presigned upload/download routes, files table |
-| **AI** | OpenAI or Fal.ai plugin + completion route |
-| **Cron Jobs** | node-cron plugin with scheduler |
-| **Webhooks** | Outbound dispatch service, endpoints table, HMAC signatures |
-| **Rate Limiting** | @fastify/rate-limit plugin (100 req/min) |
+| Pick | You get |
+|------|---------|
+| **Auth** | Better Auth with email/password, Google, GitHub, Magic Link, 2FA |
+| **Database** | Drizzle ORM + PostgreSQL (Neon, Railway, Docker, or your own URL) |
+| **Payments** | Stripe checkout + subscription webhooks (web) or RevenueCat (mobile) |
+| **Email** | Resend integration with email service helper |
+| **Storage** | S3 or Cloudflare R2 with presigned upload/download routes |
+| **AI** | OpenAI (GPT-4o) or Fal.ai with completion endpoint |
+| **Cron Jobs** | node-cron scheduler with registration pattern |
+| **Webhooks** | Outbound webhook dispatch with HMAC signatures |
+| **Rate Limiting** | @fastify/rate-limit (100 req/min default) |
 
 ## Why Not a Template?
 
-Most scaffolders clone a template. That means dependencies go stale within weeks and you inherit tech debt from day one.
+| | Templates | ShipStack Agent |
+|---|---|---|
+| **Dependencies** | Stale within weeks | Always latest (`@latest` on every install) |
+| **Unused code** | Full template, delete what you don't need | Only generates what you selected |
+| **API keys** | Figure it out yourself | Opens dashboards, guides you step by step |
+| **AI-ready** | No | Generates CLAUDE.md + PATTERNS.md + provider llms.txt |
+| **Maintenance burden** | Template repo needs constant updates | CLI generates from scratch — nothing to maintain |
 
-ShipStack Agent runs the real scaffold commands (`npx create-expo-app@latest`, `npm install fastify@latest`) so you always start with the latest versions. The only code in this repo is the CLI itself — zero boilerplate to maintain.
+## Built for AI-Assisted Development
 
-## Regenerate AI Docs
+Every generated project includes documentation that AI coding tools understand out of the box:
 
-After evolving your scaffolded project, regenerate the AI documentation:
+- **`CLAUDE.md`** — Project structure, conventions, active services, and development rules tailored to your exact configuration
+- **`docs/PATTERNS.md`** — Step-by-step recipes for adding models, routes, validation schemas, and service-specific patterns
+- **`docs/llms/*.txt`** — Actual provider documentation (fetched from better-auth.com, stripe.com, resend.com, etc.)
+
+This means Claude Code, Cursor, or any LLM-powered tool can understand your project's architecture, conventions, and available services from the first prompt.
+
+## The Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Monorepo | Turborepo + npm workspaces |
+| API | Fastify v5 |
+| Auth | Better Auth |
+| Database | Drizzle ORM + PostgreSQL |
+| Validation | Zod (shared between frontend and API) |
+| Frontend (web) | Vite + React + TailwindCSS |
+| Frontend (mobile) | Expo (React Native) |
+
+## Regenerate Docs
+
+As your project evolves, regenerate the AI documentation:
 
 ```bash
 npx shipstack-agent docs
 ```
 
-Reads `.shipstack.json` and refreshes CLAUDE.md, PATTERNS.md, and provider llms.txt files.
+Reads `.shipstack.json` from your project root and refreshes CLAUDE.md, PATTERNS.md, and provider llms.txt files.
 
 ## Contributing
 
 ```bash
-# Clone and install
 git clone https://github.com/mgorabbani/shipfast-agent-ready-stack.git
-cd shipfast-agent-ready-stack
-npm install
+cd shipfast-agent-ready-stack && npm install
 
-# Test the CLI locally
+# Run the CLI locally
 cd packages/cli && npx tsx src/index.ts init
 
 # Build
 cd packages/cli && npm run build
 ```
 
-See CLAUDE.md for repo conventions and how to add new services.
+See [CLAUDE.md](./CLAUDE.md) for repo conventions and instructions on adding new services.
 
 ## License
 
-MIT
+[MIT](./LICENSE)
