@@ -7,7 +7,7 @@ const program = new Command()
 
 program
   .name("shipstack-agent")
-  .description("AI-native backend scaffolder — your backend in 2 minutes")
+  .description("AI-native fullstack scaffolder — your app in 2 minutes")
   .version("0.1.0")
 
 program

@@ -1,7 +1,7 @@
 {
   "name": "shipstack-agent",
   "version": "0.1.0",
-  "description": "AI-native backend scaffolder — your backend in 2 minutes",
+  "description": "AI-native fullstack scaffolder — your app in 2 minutes",
   "type": "module",
   "bin": {
     "shipstack-agent": "./dist/index.js"
@@ -24,6 +24,6 @@
     "@types/node": "^22.0.0"
   },
   "engines": { "node": ">=20.0.0" },
-  "keywords": ["backend", "scaffolder", "ai-native", "fastify", "drizzle", "cli"],
+  "keywords": ["fullstack", "scaffolder", "ai-native", "fastify", "expo", "react", "drizzle", "cli"],
   "license": "MIT"
 }

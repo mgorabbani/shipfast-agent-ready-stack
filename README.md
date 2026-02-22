@@ -1,6 +1,6 @@
 # ShipStack Agent
 
-**Your backend in 2 minutes.** A CLI scaffolder that creates production-grade fullstack projects from scratch — always using the latest package versions.
+**Your fullstack app in 2 minutes.** A CLI scaffolder that creates production-grade fullstack projects from scratch — always using the latest package versions.
 
 No stale templates. No boilerplate to maintain. Just a CLI that asks what you need, walks you through service signups, and generates a project with only the services you chose.
 
