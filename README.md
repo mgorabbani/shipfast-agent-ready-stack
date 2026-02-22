@@ -8,13 +8,16 @@
 <h1 align="center">ShipStack Agent</h1>
 
 <p align="center">
-  <strong>Stop configuring. Start building.</strong><br/>
-  One command to scaffold a production-grade fullstack app — auth, payments, email, storage, AI — with zero stale dependencies.
+  <strong>Your fullstack monorepo, generated in 2 minutes. Always fresh. AI-ready from day one.</strong><br/>
+  One command to scaffold a production-grade app — auth, payments, email, storage, AI — with zero stale dependencies.
 </p>
 
 <p align="center">
   <code>npx shipstack-agent init</code>
 </p>
+
+<!-- TODO: Add a terminal recording (use `vhs` or `asciinema`) showing `npx shipstack-agent init` end-to-end -->
+<!-- <p align="center"><img src="./docs/demo.gif" alt="ShipStack Agent demo" width="600" /></p> -->
 
 ---
 
@@ -107,6 +110,16 @@ Every generated project includes documentation that AI coding tools understand o
 
 This means Claude Code, Cursor, or any LLM-powered tool can understand your project's architecture, conventions, and available services from the first prompt.
 
+## Why These Choices
+
+Every dependency in the generated stack is a deliberate bet:
+
+- **Fastify over Express** — 2-3x faster, built-in schema validation, first-class TypeScript. Express is legacy; Fastify is where the ecosystem is moving.
+- **Drizzle over Prisma** — SQL-like syntax, zero runtime overhead, no binary engine to deploy. Your queries read like SQL, not magic methods.
+- **Better Auth over NextAuth/Lucia** — framework-agnostic, plugin-based, works identically on Fastify and any frontend. No vendor lock to Next.js.
+- **Turborepo over Nx** — zero config for npm workspaces, fast caching, stays out of your way. You don't need a PhD to run `npm run dev`.
+- **Zod everywhere** — one schema definition shared between frontend forms and API validation. Change it once, both sides update.
+
 ## The Stack
 
 | Layer | Technology |
@@ -129,6 +142,11 @@ npx shipstack-agent docs
 
 Reads `.shipstack.json` from your project root and refreshes CLAUDE.md, PATTERNS.md, and provider llms.txt files.
 
+## Community
+
+- Found a bug or want a new service? [Open an issue](https://github.com/mgorabbani/shipfast-agent-ready-stack/issues)
+- Want to add a service or improve generation? PRs are welcome — see the contributing guide below
+
 ## Contributing
 
 ```bash
@@ -142,7 +160,7 @@ cd packages/cli && npx tsx src/index.ts init
 cd packages/cli && npm run build
 ```
 
-See [CLAUDE.md](./CLAUDE.md) for repo conventions and instructions on adding new services.
+See [CLAUDE.md](./CLAUDE.md) for repo conventions and step-by-step instructions on adding new services.
 
 ## License
 
