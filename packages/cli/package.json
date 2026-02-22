@@ -16,14 +16,12 @@
     "@clack/prompts": "^0.9.0",
     "commander": "^13.0.0",
     "open": "^10.0.0",
-    "picocolors": "^1.1.0",
-    "degit": "^2.8.4"
+    "picocolors": "^1.1.0"
   },
   "devDependencies": {
     "tsx": "^4.19.0",
     "typescript": "^5.5.0",
-    "@types/node": "^22.0.0",
-    "@types/degit": "^2.8.6"
+    "@types/node": "^22.0.0"
   },
   "engines": { "node": ">=20.0.0" },
   "keywords": ["backend", "scaffolder", "ai-native", "fastify", "drizzle", "cli"],

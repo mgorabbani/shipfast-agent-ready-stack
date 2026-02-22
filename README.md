@@ -1,129 +1,90 @@
-<p align="center">
-  <h1 align="center">ShipFast Stack</h1>
-  <p align="center">
-    <strong>The fullstack starter that actually ships.</strong><br/>
-    Production-grade. AI-powered. Claude Code-ready. Fork it. Build it. Ship it.
-  </p>
-  <p align="center">
-    <a href="#quick-start">Quick Start</a> · <a href="#cli-scaffolder">CLI Scaffolder</a> · <a href="#whats-inside">What's Inside</a> · <a href="#ai-superpowers">AI Superpowers</a>
-  </p>
-</p>
+# ShipStack Agent
 
----
+**Your backend in 2 minutes.** An interactive CLI that scaffolds production-grade fullstack projects from scratch — always using the latest package versions.
 
-> **Stop scaffolding. Start building.** ShipFast Stack gives you a battle-tested monorepo with auth, payments, email, storage, AI, and more — so you can focus on what makes your app unique.
+No stale templates. No boilerplate to maintain. Just a smart CLI that asks what you need, sets up your accounts, and generates a project with only the services you chose.
 
 ## Quick Start
-
-### Option A: Interactive CLI (Recommended)
 
 ```bash
 npx shipstack-agent init my-app
 ```
 
-The CLI will guide you through:
-1. Choose frontend (Expo mobile or Vite+React web)
-2. Pick services (payments, email, storage, AI, etc.)
-3. Set up API keys with guided browser walkthroughs
-4. Scaffold a project with only what you selected
+The CLI will:
+1. Ask which frontend you want (Expo mobile or Vite+React web)
+2. Let you pick services (payments, email, storage, AI, etc.)
+3. Walk you through API key setup by opening each service in your browser
+4. Scaffold a complete project using `npx create-expo-app`, `npm create vite`, etc.
+5. Generate all source code (auth, routes, DB schema) based on your selections
+6. Install latest versions of everything
+7. Generate AI documentation (CLAUDE.md, PATTERNS.md) for your project
 
-### Option B: Clone and Configure
+## Claude Code Mode
 
-```bash
-git clone https://github.com/mgorabbani/shipfast-agent-ready-stack.git my-app
-cd my-app
-npm install
-cp .env.example .env
-docker compose up -d
-npm run db:push
-npm run db:seed
-npm run dev
-```
+Don't want to use the CLI? Open this repo in Claude Code and say:
 
-## CLI Scaffolder
+> "Follow the GUIDE.md to set up a new project for me"
 
-The `shipstack-agent` CLI scaffolds projects from this template, removing services you don't need and wiring up everything automatically.
+Claude will walk you through the same steps interactively — asking about your choices, opening signup pages, and building everything from scratch.
 
-```bash
-npx shipstack-agent init       # Interactive project setup
-npx shipstack-agent docs       # Regenerate CLAUDE.md, PATTERNS.md, llms.txt
-```
+## What Gets Generated
 
-### What it does:
-- Prompts for frontend choice (Expo or Vite+React)
-- Lets you pick services: payments, email, storage, AI, cron, webhooks, rate limiting
-- Opens each service's dashboard in your browser for API key setup
-- Removes unused service files and patches imports
-- Writes `.env` with your collected keys
-- Generates dynamic AI documentation (CLAUDE.md, PATTERNS.md)
-- Downloads provider llms.txt files for AI-assisted development
-
-## What's Inside
+The CLI creates a **Turborepo monorepo** with:
 
 ```
-shipfast-stack/
+my-app/
 ├── apps/
-│   ├── api/          → Fastify v5, Better Auth, RBAC
-│   ├── mobile/       → Expo Router v4, TanStack Query
-│   └── web/          → Vite + React + TailwindCSS (optional)
+│   ├── api/          → Fastify, Better Auth, Drizzle ORM
+│   └── mobile/       → Expo (or apps/web/ → Vite+React)
 ├── packages/
-│   ├── cli/          → shipstack-agent CLI scaffolder
-│   ├── db/           → Drizzle ORM, PostgreSQL
-│   └── shared/       → Zod schemas, shared types
-├── docker-compose.yml
-└── turbo.json
+│   ├── db/           → Drizzle schema + migrations
+│   └── shared/       → Zod validation schemas
+├── CLAUDE.md         → AI documentation (auto-generated)
+├── docs/PATTERNS.md  → Development recipes (auto-generated)
+└── .env              → Your API keys (auto-collected)
 ```
 
 ## Available Services
 
 | Service | Description |
 |---------|-------------|
-| **Auth** (always on) | Better Auth with email/password, Google, GitHub, magic link, 2FA |
+| **Auth** (always on) | Better Auth — email/password, Google, GitHub |
 | **Database** (always on) | Drizzle ORM + PostgreSQL (Neon, Railway, Docker, or custom) |
-| **Payments** | Stripe (web) or RevenueCat (mobile) — checkout, subscriptions, webhooks |
-| **Email** | Resend — transactional email with HTML templates |
-| **Storage** | S3 or Cloudflare R2 — presigned upload/download URLs |
-| **AI** | OpenAI or Fal.ai — text completion and image generation |
-| **Cron Jobs** | Scheduled tasks with node-cron |
-| **Webhooks** | Outbound webhook delivery with HMAC signatures |
-| **Rate Limiting** | @fastify/rate-limit — 100 req/min default |
+| **Payments** | Stripe (web) or RevenueCat (mobile) |
+| **Email** | Resend — transactional email |
+| **Storage** | S3 or Cloudflare R2 — presigned uploads |
+| **AI** | OpenAI or Fal.ai — completions + image generation |
+| **Cron Jobs** | node-cron — scheduled tasks |
+| **Webhooks** | Outbound delivery with HMAC signatures |
+| **Rate Limiting** | @fastify/rate-limit |
 
-## Tech Stack
+## Why No Template?
 
-| Layer | What You Get |
-|-------|-------------|
-| **API** | Fastify v5 · Better Auth · RBAC · Zod validation |
-| **Mobile** | Expo SDK 52 · React Native · Expo Router v4 |
-| **Web** | Vite · React · TailwindCSS · React Router |
-| **Database** | PostgreSQL 16 · Drizzle ORM · Type-safe migrations |
-| **Data Fetching** | TanStack Query v5 · Session-based auth |
-| **Validation** | Zod schemas shared between client & server |
-| **Build** | Turborepo · npm workspaces · Parallel builds |
-| **AI Dev** | Dynamic CLAUDE.md · PATTERNS.md · llms.txt |
+Most CLI scaffolders clone a template repo. That means:
+- Dependencies go stale within weeks
+- You inherit tech debt from day one
+- The maintainer has to keep the whole stack up to date
 
-## AI Superpowers
+**ShipStack Agent takes a different approach.** It runs the actual scaffold commands (`npx create-expo-app@latest`, `npm install fastify@latest`, etc.) so you always get the latest versions. The only code in this repo is the CLI itself.
 
-Every scaffolded project includes auto-generated AI documentation:
+## Regenerate AI Docs
 
-- **CLAUDE.md** — Project structure, active services, conventions, do/don't rules
-- **docs/PATTERNS.md** — Step-by-step recipes for common tasks (tailored to your services)
-- **docs/llms/*.txt** — Provider documentation for AI assistants
-
-### Regenerate after changes
+After making changes to your scaffolded project:
 
 ```bash
 npx shipstack-agent docs
 ```
 
-## Commands
+This regenerates CLAUDE.md and PATTERNS.md based on your `.shipstack.json` config.
+
+## Development
 
 ```bash
-npm run dev              # Start all apps
-npm run db:push          # Push schema to DB
-npm run db:generate      # Generate migration
-npm run db:migrate       # Run migrations
-npm run db:seed          # Seed demo data
-npm run build            # Build all packages
+# Test CLI locally
+cd packages/cli && npx tsx src/index.ts init
+
+# Build for publishing
+cd packages/cli && npm run build
 ```
 
 ## License

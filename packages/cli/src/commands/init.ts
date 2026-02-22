@@ -1,5 +1,7 @@
 import * as p from "@clack/prompts"
 import pc from "picocolors"
+import fs from "fs"
+import path from "path"
 import { promptProject } from "../prompts/project.js"
 import { promptFrontend } from "../prompts/frontend.js"
 import {
@@ -10,15 +12,17 @@ import {
   promptDatabaseProvider,
 } from "../prompts/services.js"
 import { runOnboarding } from "../onboarding/index.js"
-import { cloneTemplate } from "../scaffold/clone.js"
-import { pruneServices } from "../scaffold/prune.js"
-import { writeEnvFile } from "../scaffold/patchEnv.js"
-import { patchPackageJson } from "../scaffold/patchPackageJson.js"
-import { patchApiIndex, patchDbSchemaIndex, patchSharedIndex } from "../scaffold/patchImports.js"
+import { initMonorepo } from "../steps/initMonorepo.js"
+import { setupApi } from "../steps/setupApi.js"
+import { setupFrontend } from "../steps/setupFrontend.js"
+import { setupDatabase } from "../steps/setupDatabase.js"
+import { setupShared } from "../steps/setupShared.js"
+import { generateDbSchema } from "../generators/dbSchema.js"
+import { generateApiCode } from "../generators/apiCode.js"
+import { writeEnvFile } from "../steps/writeEnv.js"
+import { installDeps } from "../steps/installDeps.js"
 import { generateDocs } from "../docs/index.js"
 import type { ProjectConfig } from "../types.js"
-import fs from "fs"
-import path from "path"
 
 export async function initCommand(name?: string) {
   p.intro(pc.bgCyan(pc.black(" shipstack-agent init ")))
@@ -65,26 +69,30 @@ export async function initCommand(name?: string) {
   p.log.info(`Frontend: ${pc.bold(config.frontend)}`)
   p.log.info(`Services: ${pc.bold(["auth", "database", ...config.services].join(", "))}`)
 
-  // Guided onboarding
+  // Guided onboarding — collect API keys
   const env = await runOnboarding(config)
   config.env = env
-
   p.log.success(`Collected ${Object.keys(env).length} environment variables`)
 
-  // Scaffold
-  await cloneTemplate(project.dir)
-  pruneServices(project.dir, config)
-  patchApiIndex(project.dir, config)
-  patchDbSchemaIndex(project.dir, config)
-  patchSharedIndex(project.dir, config)
-  patchPackageJson(project.dir, config)
-  writeEnvFile(project.dir, env)
+  // Scaffold from scratch using latest packages
+  initMonorepo(project.dir, config)
+  setupDatabase(project.dir, config)
+  setupShared(project.dir, config)
+  setupApi(project.dir, config)
+  setupFrontend(project.dir, config)
 
-  p.log.success("Project scaffolded!")
+  // Generate source code based on config
+  generateDbSchema(project.dir, config)
+  generateApiCode(project.dir, config)
 
-  // Generate AI docs
+  // Write env files
+  writeEnvFile(project.dir, config)
+
+  // Install all dependencies (gets latest versions)
+  installDeps(project.dir)
+
+  // Generate AI documentation
   await generateDocs(project.dir, config)
-
   p.log.success("AI documentation generated!")
 
   // Save config for docs regeneration
@@ -93,14 +101,20 @@ export async function initCommand(name?: string) {
     JSON.stringify(config, null, 2) + "\n",
   )
 
+  // Init git repo
+  const { execSync } = await import("child_process")
+  execSync("git init && git add -A && git commit -m 'Initial commit from shipstack-agent'", {
+    cwd: project.dir,
+    stdio: "pipe",
+  })
+  p.log.success("Git repository initialized!")
+
   // Final output
   p.note(
     [
       `cd ${config.name}`,
-      "npm install",
       config.databaseProvider === "docker" ? "docker compose up -d" : "",
       "npm run db:push",
-      "npm run db:seed",
       "npm run dev",
     ]
       .filter(Boolean)
@@ -108,5 +122,5 @@ export async function initCommand(name?: string) {
     "Next steps",
   )
 
-  p.outro("Your AI-native backend is ready!")
+  p.outro("Your project is ready — built with the latest packages!")
 }
