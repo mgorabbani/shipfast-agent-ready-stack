@@ -16,8 +16,7 @@
   <code>npx shipstack-agent init</code>
 </p>
 
-<!-- TODO: Add a terminal recording (use `vhs` or `asciinema`) showing `npx shipstack-agent init` end-to-end -->
-<!-- <p align="center"><img src="./docs/demo.gif" alt="ShipStack Agent demo" width="600" /></p> -->
+<p align="center"><img src="./docs/demo.gif" alt="ShipStack Agent demo" width="700" /></p>
 
 ---
 

@@ -9,6 +9,8 @@
     "build": "cd packages/cli && tsc"
   },
   "devDependencies": {
+    "dotenv": "^8.2.0",
+    "node-fetch": "^3.3.2",
     "tsx": "^4.19.0"
   },
   "engines": {
