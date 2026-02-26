@@ -1,103 +1,75 @@
-# ShipFast Stack
+# ShipStack Agent
 
-Production-grade, Claude Code-enabled fullstack monorepo starter.
+CLI scaffolder that creates production-grade fullstack projects from scratch using the latest package versions.
 
-## Project Overview
+**This repo contains no boilerplate code.** It's a CLI tool + a guide for Claude Code.
 
-This is a **Turborepo monorepo** with:
-- `apps/api` — Fastify v5 REST API (TypeScript)
-- `apps/mobile` — Expo SDK 52 mobile app (iOS/Android/Web)
-- `packages/db` — Drizzle ORM, PostgreSQL schema & migrations
-- `packages/shared` — Shared Zod schemas, types & constants
-- `.claude/skills/` — Claude Code skills (image generation, etc.)
-
-## Architecture
+## Repo Structure
 
 ```
-shipfast-stack/
-├── apps/
-│   ├── api/          → Fastify v5, JWT auth, RBAC
-│   └── mobile/       → Expo Router v4, TanStack Query
-├── packages/
-│   ├── db/           → Drizzle ORM, PostgreSQL
-│   └── shared/       → Zod schemas, shared types
-├── docker-compose.yml
-└── turbo.json
+shipstack-agent/
+├── packages/cli/          → The CLI tool (npm: shipstack-agent)
+│   ├── src/commands/      → init and docs commands
+│   ├── src/prompts/       → interactive CLI prompts
+│   ├── src/onboarding/    → guided API key collection per service
+│   ├── src/steps/         → scaffold steps (init monorepo, setup API, etc.)
+│   ├── src/generators/    → code generators (DB schema, API code, etc.)
+│   └── src/docs/          → CLAUDE.md, PATTERNS.md, llms.txt generators
+├── GUIDE.md               → Step-by-step guide for Claude Code to follow
+├── CLAUDE.md              → This file
+└── README.md
 ```
 
-## Core Conventions
+## How It Works
 
-### Package References
-- Import from `@shipfast/db` and `@shipfast/shared` — never use relative paths across packages.
-- All shared types and validation schemas live in `packages/shared`.
-- Database schema and queries live in `packages/db`.
+### CLI Mode (`npx shipstack-agent init`)
+1. Prompts for project name, frontend (Expo/Vite+React), services
+2. Opens each service's dashboard in browser for API key setup
+3. Runs real scaffold commands (`npx create-expo-app`, `npm create vite`, etc.)
+4. Generates source code dynamically based on selections
+5. Installs all dependencies (always gets latest versions)
+6. Generates AI documentation for the new project
 
-### TypeScript
-- Strict mode enabled everywhere.
-- Use `type` imports when importing only types: `import type { User } from "@shipfast/db"`.
-- Prefer `interface` for object shapes, `type` for unions/intersections.
-
-### Code Style
-- No semicolons (Prettier default for this project).
-- 2-space indentation.
-- Prefer `const` over `let`. Never use `var`.
-- Use arrow functions for callbacks, regular functions for top-level declarations.
-
-### Commit Messages
-- Use conventional commits: `feat:`, `fix:`, `refactor:`, `docs:`, `chore:`.
-- Keep the first line under 72 characters.
-- Reference issue numbers when applicable.
-
-### Error Handling
-- API routes: throw Fastify errors with proper HTTP status codes.
-- Never silently swallow errors. Log or re-throw.
-- Use Zod for all input validation at API boundaries.
+### Claude Code Mode (GUIDE.md)
+Claude Code reads GUIDE.md and follows the steps interactively, asking the user about choices and walking them through service signups.
 
 ## Key Commands
 
 ```bash
-# Development
-npm run dev              # Start all apps in dev mode
-npm run dev --filter=api # Start only the API
+# Test CLI locally
+cd packages/cli && npx tsx src/index.ts init
 
-# Database
-npm run db:generate      # Generate migration from schema changes
-npm run db:migrate       # Run pending migrations
-npm run db:push          # Push schema directly (dev only)
-npm run db:seed          # Seed database with sample data
-
-# Build
-npm run build            # Build all packages
-npm run typecheck        # Type-check all packages
+# Build CLI
+cd packages/cli && npm run build
 ```
 
-## Environment Variables
+## Available Services (generated into scaffolded projects)
 
-Copy `.env.example` to `.env` and fill in:
-- `DATABASE_URL` — PostgreSQL connection string
-- `JWT_SECRET` — Secret for access tokens
-- `JWT_REFRESH_SECRET` — Secret for refresh tokens
+| Service | What Gets Generated |
+|---------|-------------------|
+| Auth (Better Auth) | Auth plugin, session tables, social providers |
+| Payments (Stripe) | Stripe plugin, checkout route, webhook handler, subscriptions table |
+| Payments (RevenueCat) | RevenueCat plugin, entitlements route, webhook handler |
+| Email (Resend) | Email plugin, email service helper |
+| Storage (S3/R2) | S3 plugin, presigned upload/download routes, files table |
+| AI (OpenAI/Fal.ai) | AI plugin, completion route |
+| Cron Jobs | Cron plugin with scheduler |
+| Webhooks | Webhook dispatch service, endpoints table, CRUD routes |
+| Rate Limiting | @fastify/rate-limit plugin |
 
-## Adding a New Feature
+## Code Style (for this repo)
 
-When adding a new feature (e.g., "posts"), follow this order:
+- No semicolons, 2-space indentation
+- Prefer `const` over `let`, never `var`
+- Use conventional commits: `feat:`, `fix:`, `refactor:`, `docs:`, `chore:`
 
-1. **Schema** — Add table in `packages/db/src/schema/`, export from index.
-2. **Migration** — Run `npm run db:generate` then `npm run db:migrate`.
-3. **Shared types** — Add Zod schemas in `packages/shared/src/schemas/`.
-4. **API route** — Create route file in `apps/api/src/routes/`, register in `index.ts`.
-5. **Mobile screens** — Add screens in `apps/mobile/app/(tabs)/`.
+## Adding a New Service to the CLI
 
-## Auth System
-
-- JWT access tokens (15 min) + refresh tokens (7 days).
-- Refresh token rotation on each refresh.
-- RBAC with permission-based access control.
-- Protected routes use `fastify.authenticate` preHandler.
-- Permission checks use `fastify.requirePermission()`.
-
-## Testing
-
-- API: Use Vitest (configured but tests are yours to write).
-- Mobile: Use Jest + React Native Testing Library.
-- Always co-locate test files next to source: `auth.test.ts` beside `auth.ts`.
+1. Add the service type to `src/types.ts`
+2. Add prompt option in `src/prompts/services.ts`
+3. Add onboarding flow in `src/onboarding/<service>.ts` → register in `src/onboarding/index.ts`
+4. Add dependency in `src/steps/setupApi.ts`
+5. Add schema generator in `src/generators/dbSchema.ts` (if DB tables needed)
+6. Add plugin/route generator in `src/generators/apiCode.ts`
+7. Add documentation section in `src/docs/claudemd.ts` and `src/docs/patterns.ts`
+8. Update GUIDE.md with the new service's setup steps
