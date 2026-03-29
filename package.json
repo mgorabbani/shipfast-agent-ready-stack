@@ -1,21 +1,16 @@
 {
-  "name": "shipfast-stack",
+  "name": "shipstack-agent",
   "private": true,
   "workspaces": [
-    "apps/*",
     "packages/*"
   ],
   "scripts": {
-    "dev": "turbo dev",
-    "build": "turbo build",
-    "typecheck": "turbo typecheck",
-    "db:generate": "turbo db:generate",
-    "db:migrate": "turbo db:migrate",
-    "db:push": "turbo db:push",
-    "db:seed": "tsx scripts/seed.ts"
+    "dev": "cd packages/cli && tsx src/index.ts",
+    "build": "cd packages/cli && tsc"
   },
   "devDependencies": {
-    "turbo": "^2.8.0",
+    "dotenv": "^8.2.0",
+    "node-fetch": "^3.3.2",
     "tsx": "^4.19.0"
   },
   "engines": {
